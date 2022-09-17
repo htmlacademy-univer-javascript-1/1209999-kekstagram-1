@@ -12,8 +12,6 @@ function calculateRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-calculateRandomNumber(0, 11);
-calculateRandomNumber(11, 11);
 calculateRandomNumber(12, 43);
 
 /**
@@ -32,4 +30,3 @@ function сheckLengthOfString(verifiableString, maxLenght) {
 }
 
 сheckLengthOfString('zxcqweasdqweasdzxc', 122);
-сheckLengthOfString('Тестик 664', 664);
