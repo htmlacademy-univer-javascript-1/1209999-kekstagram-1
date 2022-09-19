@@ -5,7 +5,7 @@
  * @param {number} max - максимальное число диапазона
  * @returns {number} - случайное число из диапазона
  */
-function calculateRandomNumber(min, max) {
+ function calculateRandomNumber(min, max) {
   if (min < 0 || min >= max) {
     throw {name : 'Invalid arguments', message : 'you passed invalid arguments'};
   }
@@ -17,16 +17,10 @@ calculateRandomNumber(12, 43);
 /**
  * Функция для проверки максимальной длины строки.
  *
- * @param {object} verifiableString - проверяемая строка
+ * @param {string} verifiableString - проверяемая строка
  * @param {number} maxLenght - максимальная длина строки
  * @returns {boolean} - true, если строка проходит по длине, и false — если не проходит
  */
-function сheckLengthOfString(verifiableString, maxLenght) {
-  verifiableString = String(verifiableString);
-  if (verifiableString.length < maxLenght) {
-    return true;
-  }
-  return false;
-}
+const сheckLengthOfString = (verifiableString, maxLenght) => verifiableString.length < maxLenght;
 
 сheckLengthOfString('zxcqweasdqweasdzxc', 122);
