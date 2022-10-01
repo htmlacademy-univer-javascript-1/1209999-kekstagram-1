@@ -5,7 +5,7 @@
  * @param {number} max - максимальное число диапазона
  * @returns {number} - случайное число из диапазона
  */
- function calculateRandomNumber(min, max) {
+function calculateRandomNumber(min, max) {
   if (min < 0 || min >= max) {
     throw {name : 'Invalid arguments', message : 'you passed invalid arguments'};
   }
