@@ -25,3 +25,5 @@ const DESCRIPTION = [
   'Катаемся на санках',
   'Прыжки с трамплина',
 ];
+
+export {NAMES, COMMENTS, DESCRIPTION};
