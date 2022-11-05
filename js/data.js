@@ -85,4 +85,4 @@ function createDescription(id){
 }
 
 
-export {resultArray};
+export { resultArray };
