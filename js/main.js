@@ -1,3 +1,4 @@
-import { bringPictures } from './rendering-big-pictures.js';
+import { renderTemplate } from './templates.js';
+import {} from './uploadForm.js';
 
-bringPictures();
+renderTemplate();

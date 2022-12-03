@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-import {calculateRandomNumber, getRandomElement} from './util.js';
-
+import { calculateRandomNumber, randomArrayElement, stringByTemplate } from './util.js';
 
 const NAMES = [
   'Pavel',
@@ -29,60 +27,33 @@ const DESCRIPTION = [
   'Прыжки с трамплина',
 ];
 
+const photosTemplate = 'photos/{{i}}.jpg';
+const avatarsTemplate = 'img/avatar-{{число от 1 до 6}}.svg';
 
-// Задаем количество фотографий и диапазон лайков
-const quantityPictures = 25;
-const likes = {
-  min: 15,
-  max: 200,
+const createComment = () => {
+  let message = '';
+  const sentencesNumber = calculateRandomNumber(1, 2);
+  for (let i = 0; i < sentencesNumber; i++) {
+    message += ` ${randomArrayElement(COMMENTS)}`;
+  }
+  return {
+    id: calculateRandomNumber(0, 25000),
+    avatar: stringByTemplate(avatarsTemplate, calculateRandomNumber(1, 6)),
+    message: message,
+    name: randomArrayElement(NAMES),
+  };
 };
 
+const createComments = () => Array.from({length: calculateRandomNumber(1, 3)}, createComment);
 
-/**
- * Функция, создающая комментарий к фотографии.
- *
- * @param {number} id - случайное число. Идентификаторы не должны повторяться.
- * @returns {object} - комментарий в виде объекта.
- */
-function createComment(id){
-  return {
-    id: calculateRandomNumber(1, 500),
-    avatar: `img/avatar-${id}.svg`,
-    message: getRandomElement(COMMENTS),
-    name: getRandomElement(NAMES)
-  };
-}
+const createPost = () => ({
+  id: calculateRandomNumber(1, 25),
+  url: stringByTemplate(photosTemplate, calculateRandomNumber(1, 25)),
+  description: randomArrayElement(DESCRIPTION),
+  likes: calculateRandomNumber(15, 200),
+  comments: createComments()
+});
 
+const createPosts = () => Array.from({length: 25}, createPost);
 
-/**
- * Функция, создающая комментарий к фотографии.
- *
- * @param {number} len - длинна создаваемого массива(пустого).
- * @param {function} func - функция, которая будет заполнять массив.
- * @returns {array}
- */
-const createArrayObj = (len, func) => Array.from({length: len}).map((value, index) => func(index + 1));
-
-
-// Массив из quantityPictures сгенерированных объектов.
-const resultArray = createArrayObj(quantityPictures, createDescription);
-
-
-/**
- * Функция, создающая комментарий к фотографии.
- *
- * @param {number} id - случайное число. Идентификаторы не должны повторяться.
- * @returns {object} - информация о фотографии.
- */
-function createDescription(id){
-  return {
-    id: id,
-    url: `photos/${id}.jpg`,
-    description: getRandomElement(DESCRIPTION),
-    likes: calculateRandomNumber(likes.min, likes.max),
-    comments: createArrayObj(getRandomElement(1, 6), createComment),
-  };
-}
-
-
-export { resultArray };
+export { createPosts, createPost };
