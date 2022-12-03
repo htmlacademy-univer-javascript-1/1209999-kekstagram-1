@@ -16,9 +16,6 @@ const pristine = new Pristine(form, {
   errorTextClass: 'img-upload__error'
 });
 
-pristine.addValidator(hashtagsInput, showHashtags, 'Некорректный ввод хэш-тегов');
-pristine.addValidator(descriptionInput, (value) => checkStringLength(value, 140), 'Длина комментария не должна превышать 140 символов');
-
 function showHashtags(hashtagsString) {
   if (hashtagsString.length === 0) {
     return true;
@@ -42,5 +39,9 @@ function showHashtags(hashtagsString) {
 function validateForm() {
   return pristine.validate();
 }
+
+pristine.addValidator(hashtagsInput, showHashtags, 'Некорректный ввод хэш-тегов');
+pristine.addValidator(descriptionInput, (value) => checkStringLength(value, 140), 'Длина комментария не должна превышать 140 символов');
+
 
 export {form, hashtagsInput, descriptionInput, validateForm};
