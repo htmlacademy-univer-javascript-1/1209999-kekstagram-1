@@ -27,6 +27,7 @@ const DESCRIPTION = [
   'Прыжки с трамплина',
 ];
 
+const maxComments = 10;
 const photosTemplate = 'photos/{{i}}.jpg';
 const avatarsTemplate = 'img/avatar-{{число от 1 до 6}}.svg';
 
@@ -44,7 +45,7 @@ const createComment = () => {
   };
 };
 
-const createComments = () => Array.from({length: calculateRandomNumber(1, 3)}, createComment);
+const createComments = () => Array.from({length: calculateRandomNumber(1, maxComments)}, createComment);
 
 const createPost = () => ({
   id: calculateRandomNumber(1, 25),

@@ -11,10 +11,14 @@ form.addEventListener('submit', (evt) => {
   }
 });
 
-uploadFile.addEventListener('change', () => {
-  imgUploadOverlay.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-});
+function closeForm() {
+  document.body.classList.remove('modal-open');
+  imgUploadOverlay.classList.add('hidden');
+  uploadFile.name = '';
+  descriptionInput.value = '';
+  hashtagsInput.value = '';
+}
+
 
 closeFormButton.addEventListener('click', closeForm);
 document.addEventListener('keydown', (evt) => {
@@ -24,11 +28,7 @@ document.addEventListener('keydown', (evt) => {
   }
 });
 
-function closeForm() {
-  document.body.classList.remove('modal-open');
-  imgUploadOverlay.classList.add('hidden');
-  uploadFile.name = '';
-  descriptionInput.value = '';
-  hashtagsInput.value = '';
-}
-
+uploadFile.addEventListener('change', () => {
+  imgUploadOverlay.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+});
