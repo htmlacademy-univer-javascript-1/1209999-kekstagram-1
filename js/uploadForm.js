@@ -1,4 +1,4 @@
-import { form, hashtagsInput, descriptionInput, validateForm } from './uploadFormValidation.js'
+import { form, hashtagsInput, descriptionInput, validateForm } from './uploadFormValidation.js';
 import './photoFilter.js';
 
 const escKeycode = 27;
