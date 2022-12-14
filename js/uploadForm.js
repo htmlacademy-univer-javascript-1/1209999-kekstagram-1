@@ -1,5 +1,7 @@
-import { form, hashtagsInput, descriptionInput, validateForm } from './uploadFormValidation.js';
+import { form, hashtagsInputForm, descriptionInputForm, validateForm } from './uploadFormValidation.js';
+import { makeFormAsync } from './webSocket.js';
 import './photoFilter.js';
+import './scalePhoto.js';
 
 const escKeycode = 27;
 const uploadFile = document.querySelector('#upload-file');
@@ -7,17 +9,20 @@ const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const closeFormButton = document.querySelector('#upload-cancel');
 
 form.addEventListener('submit', (evt) => {
+  evt.preventDefault();
   if (!validateForm()) {
-    evt.preventDefault();
+    return;
   }
+  makeFormAsync(new FormData(evt.target));
+  closeForm();
 });
 
 function closeForm() {
   document.body.classList.remove('modal-open');
   imgUploadOverlay.classList.add('hidden');
   uploadFile.name = '';
-  descriptionInput.value = '';
-  hashtagsInput.value = '';
+  descriptionInputForm.value = '';
+  hashtagsInputForm.value = '';
 }
 
 

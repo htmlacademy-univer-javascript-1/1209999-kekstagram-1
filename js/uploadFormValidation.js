@@ -2,9 +2,8 @@ import { checkStringLength } from './util.js';
 import '../pristine/pristine.min.js';
 
 const form = document.querySelector('.img-upload__form');
-const hashtagsInput = document.querySelector('.text__hashtags');
-const descriptionInput = document.querySelector('.text__description');
-
+const hashtagsInputForm = document.querySelector('.text__hashtags');
+const descriptionInputForm = document.querySelector('.text__description');
 const hashtagTemplate = '#[A-Za-zА-Яа-яЁё0-9]{1,19}';
 
 const pristine = new Pristine(form, {
@@ -40,8 +39,8 @@ function validateForm() {
   return pristine.validate();
 }
 
-pristine.addValidator(hashtagsInput, showHashtags, 'Некорректный ввод хэш-тегов');
-pristine.addValidator(descriptionInput, (value) => checkStringLength(value, 140), 'Длина комментария не должна превышать 140 символов');
+pristine.addValidator(hashtagsInputForm, showHashtags, 'Некорректный ввод хэш-тегов');
+pristine.addValidator(descriptionInputForm, (value) => checkStringLength(value, 140), 'Длина комментария не должна превышать 140 символов');
 
 
-export {form, hashtagsInput, descriptionInput, validateForm};
+export {form, hashtagsInputForm, descriptionInputForm, validateForm};
