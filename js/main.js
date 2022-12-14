@@ -1,4 +1,5 @@
 import { renderTemplate } from './templates.js';
-import {} from './uploadForm.js';
+import { getPostsAsync } from './webSocket.js';
+import './uploadForm.js';
 
-renderTemplate();
+getPostsAsync(renderTemplate);
