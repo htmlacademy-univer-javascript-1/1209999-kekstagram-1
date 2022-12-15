@@ -1,7 +1,8 @@
 import { showError, showComplete } from './alert.js';
 
 const server = 'https://26.javascript.pages.academy/kekstagram';
-const error_reason = 'Ошибка загрузки фотографий';
+const serverData = 'https://26.javascript.pages.academy/kekstagram';
+const errorReason = 'Ошибка загрузки фотографий';
 
 function makeFormAsync(formData) {
   fetch(server,
@@ -13,10 +14,10 @@ function makeFormAsync(formData) {
       if (response.ok) {
         showComplete();
       } else {
-        showError(error_reason, reasonFromResponse(response));
+        showError(errorReason, reasonFromResponse(response));
       }
     })
-    .catch((reason) => showError(error_reason, reason));
+    .catch((reason) => showError(errorReason, reason));
 }
 
 function reasonFromResponse(response) {
@@ -24,16 +25,16 @@ function reasonFromResponse(response) {
 }
 
 function getPostsAsync(receivePostsFun) {
-  fetch(server + '/data')
+  fetch(serverData)
     .then((response) => {
       if (response.ok) {
         return response.json();
       }
-      showError(error_reason, reasonFromResponse(response));
+      showError(errorReason, reasonFromResponse(response));
       return [];
     })
     .then((posts) => receivePostsFun(posts))
-    .catch((reason) => showError(error_reason, reason));
+    .catch((reason) => showError(errorReason, reason));
 }
 
 export { getPostsAsync, makeFormAsync };
