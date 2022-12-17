@@ -28,4 +28,4 @@ function showComplete() {
   completeBlock.classList.remove('hidden');
 }
 
-export { showError, showComplete }
+export { showError, showComplete };

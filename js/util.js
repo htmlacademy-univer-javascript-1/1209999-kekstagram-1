@@ -10,6 +10,24 @@ function randomArrayElement(elements, countOfElements) {
   return elements[calculateRandomNumber(0, elements.length - 1)];
 }
 
+function throttle (callback, delayBetweenFrames) {
+  let lastTime = 0;
+
+  return (...rest) => {
+    const now = new Date();
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
+}
+
+let timeoutId;
+function debounce(callback, timeoutDelay = 500) {
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(callback, timeoutDelay);
+}
+
 function calculateRandomNumber(min, max) {
   if (min < 0 || min >= max) {
     throw { name: 'Invalid arguments', message: 'Invalid arguments' };
@@ -27,4 +45,16 @@ function checkStringLength(string, maxLength) {
   return string.length <= maxLength;
 }
 
-export { randomArrayElement, calculateRandomNumber, stringByTemplate, checkStringLength };
+function randomArrayElements(n, array) {
+  const set = new Set();
+  for (let i = 0; i < n; i++) {
+    let element;
+    do {
+      element = randomArrayElement(array);
+    } while (set.has(element));
+    set.add(element);
+  }
+  return Array.from(set);
+}
+
+export { randomArrayElement, calculateRandomNumber, stringByTemplate, checkStringLength, debounce, throttle, randomArrayElements };
