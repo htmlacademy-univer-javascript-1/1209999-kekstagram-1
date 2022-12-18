@@ -1,40 +1,75 @@
-import { form, hashtagsInputForm, descriptionInputForm, validateForm } from './uploadFormValidation.js';
-import { makeFormAsync } from './webSocket.js';
-import './photoFilter.js';
-import './scalePhoto.js';
+import { form, imagePreview } from './util.js';
+import { hashtagsInput, imgDescriptionInput, validateForm, validateFile } from './uploadFormValidation.js';
+import { resetEffects } from './photoFilter.js';
+import { resetScale } from './scalePhoto.js';
+import { sendPostAsync } from './network.js';
+import { showError, showSuccess } from './alert.js';
 
-const escKeycode = 27;
-const uploadFile = document.querySelector('#upload-file');
-const imgUploadOverlay = document.querySelector('.img-upload__overlay');
-const closeFormButton = document.querySelector('#upload-cancel');
+const SERVER_URL = 'https://26.javascript.pages.academy/kekstagram';
+const UPLOAD_POST_ERROR_MESSAGE = 'Ошибка загрузки фотографии';
+const ESC_KEYCODE = 27;
+
+const fileChooser = document.querySelector('#upload-file');
+const imgEditBlock = form.querySelector('.img-upload__overlay');
+const closeFormButton = form.querySelector('#upload-cancel');
+const submitButton = form.querySelector('#upload-submit');
 
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (!validateForm()) {
     return;
   }
-  makeFormAsync(new FormData(evt.target));
-  closeForm();
+  submitButton.setAttribute('disabled', '');
+  sendPostAsync(
+    SERVER_URL,
+    new FormData(evt.target),
+    () => {
+      closeForm();
+      showSuccess();
+    },
+    (reason) => {
+      closeForm(false);
+      showError(UPLOAD_POST_ERROR_MESSAGE, reason, showForm);
+    },
+    () => {
+      submitButton.removeAttribute('disabled');
+    });
 });
 
-function closeForm() {
-  document.body.classList.remove('modal-open');
-  imgUploadOverlay.classList.add('hidden');
-  uploadFile.name = '';
-  descriptionInputForm.value = '';
-  hashtagsInputForm.value = '';
-}
-
+fileChooser.addEventListener('change', () => {
+  const file = fileChooser.files[0];
+  if (!validateFile(file.name)) {
+    const point = file.name.lastIndexOf('.');
+    showError('Некорректный формат файла', file.name.substring(point));
+    return;
+  }
+  imagePreview.src = URL.createObjectURL(file);
+  showForm();
+});
 
 closeFormButton.addEventListener('click', closeForm);
 document.addEventListener('keydown', (evt) => {
-  if (evt.keyCode === escKeycode && !(evt.target.matches('input') || evt.target.matches('textarea'))) {
+  if (evt.keyCode === ESC_KEYCODE && !(evt.target.matches('input') || evt.target.matches('textarea'))) {
     evt.preventDefault();
     closeForm();
   }
 });
 
-uploadFile.addEventListener('change', () => {
-  imgUploadOverlay.classList.remove('hidden');
+function showForm() {
+  imgEditBlock.classList.remove('hidden');
   document.body.classList.add('modal-open');
-});
+}
+
+function closeForm(reset = true) {
+  document.body.classList.remove('modal-open');
+  imgEditBlock.classList.add('hidden');
+  if (!reset) {
+    return;
+  }
+  fileChooser.value = '';
+  imgDescriptionInput.value = '';
+  hashtagsInput.value = '';
+  resetEffects();
+  resetScale();
+}
+

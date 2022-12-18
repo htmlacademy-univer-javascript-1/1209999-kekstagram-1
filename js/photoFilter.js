@@ -1,18 +1,61 @@
 import '../nouislider/nouislider.js';
+import {form, imagePreview} from './util.js';
 
-const form = document.querySelector('.img-upload__form');
-const imgPreview = form.querySelector('.img-upload__preview');
-const filterValue = form.querySelector('.effect-level__value');
+const defaultButton = document.querySelector('#effect-none');
 const slider = form.querySelector('.effect-level__slider');
+const effectLevel = form.querySelector('.effect-level__value');
 
-function makeFilterInfo(filterName, valueUnit, min, max, start, step) {
+const effectInfos = {
+  'chrome': makeFilterInfo('chrome', 'grayscale', '', 0, 1, 0, 0.1),
+  'sepia': makeFilterInfo('sepia', 'sepia', '', 0, 1, 0, 0.1),
+  'marvin': makeFilterInfo('marvin', 'invert', '%', 0, 100, 0.1, 1),
+  'phobos': makeFilterInfo('phobos', 'blur', 'px', 0, 3, 0, 0.1),
+  'heat': makeFilterInfo('heat', 'brightness', '', 1, 3, 1, 0.1),
+  'none': makeFilterInfo('none', 'grayscale', '', 0, 0, 0, 0)
+};
+
+slider.classList.add('hidden');
+let currentFilterInfo = effectInfos['none'];
+noUiSlider.create(slider, currentFilterInfo.sliderOptions);
+
+slider.noUiSlider.on('update', () => {
+  const value = slider.noUiSlider.get();
+  imagePreview.style.filter = currentFilterInfo.getStyle(value);
+  effectLevel.value = value.toString();
+});
+
+form.addEventListener('change', (evt) => {
+  if (!evt.target.matches('input[type="radio"]')) {
+    return;
+  }
+  const newFilter = evt.target.value;
+  changeFilter(newFilter);
+});
+
+function changeFilter(newFilter) {
+  imagePreview.classList.remove(currentFilterInfo.effectClass);
+  if (newFilter === 'none') {
+    slider.classList.add('hidden');
+  } else {
+    slider.classList.remove('hidden');
+  }
+  currentFilterInfo = effectInfos[newFilter];
+  imagePreview.classList.add(currentFilterInfo.effectClass);
+  slider.noUiSlider.updateOptions(currentFilterInfo.sliderOptions);
+  slider.noUiSlider.set(currentFilterInfo.sliderOptions.start);
+}
+
+function makeFilterInfo(effectName, styleName, styleValueUnit, sliderMin, sliderMax, sliderStart, sliderStep) {
   return {
-    filterInfo: setInfo(filterName, valueUnit),
-    sliderOptions: setOptions(min, max, start, step)
+    effectClass: `effects__preview--${effectName}`,
+    sliderOptions: makeSliderOptions(sliderMin, sliderMax, sliderStart, sliderStep),
+    getStyle(value) {
+      return `${styleName}(${value}${styleValueUnit}`;
+    },
   };
 }
 
-function setOptions(min, max, start, step) {
+function makeSliderOptions(min, max, start, step) {
   return {
     range: {min, max},
     start: start,
@@ -21,58 +64,8 @@ function setOptions(min, max, start, step) {
   };
 }
 
-function setInfo(filterName, valueUnit) {
-  return {
-    filterName: filterName,
-    valueUnit: valueUnit,
-  };
+function resetEffects() {
+  defaultButton.click();
 }
 
-const filterInfos = {
-  'sepia': makeFilterInfo('sepia', '', 0, 1, 0, 0.1),
-  'marvin': makeFilterInfo('invert', '%', 0, 100, 0.1, 1),
-  'phobos': makeFilterInfo('blur', 'px', 0, 3, 0, 0.1),
-  'chrome': makeFilterInfo('grayscale', '', 0, 1, 0, 0.1),
-  'heat': makeFilterInfo('brightness', '', 1, 3, 1, 0.1)
-};
-
-slider.classList.add('hidden');
-let currentFilterClass = 'effects__preview--none';
-let currentFilterInfo = filterInfos['chrome'];
-noUiSlider.create(slider, currentFilterInfo.sliderOptions);
-
-form.addEventListener('change', (evt) => {
-  if (!evt.target.matches('input[type="radio"]')) {
-    return;
-  }
-  const newFilter = evt.target.value;
-  updateFilterClass(newFilter);
-  if (newFilter === 'none') {
-    imgPreview.style.filter = 'none';
-    slider.classList.add('hidden');
-    return;
-  }
-  currentFilterInfo = filterInfos[newFilter];
-  slider.noUiSlider.updateOptions(filterInfos[newFilter].sliderOptions);
-  if (slider.classList.contains('hidden')) {
-    slider.classList.remove('hidden');
-  }
-});
-
-function createFilterString(filterInfo, value) {
-  return `${filterInfo.filterName}(${value}${filterInfo.valueUnit})`;
-}
-
-function updateFilterClass(newFilterName) {
-  const newFilterClass = `effects__preview--${newFilterName}`;
-  imgPreview.classList.remove(currentFilterClass);
-  imgPreview.classList.add(newFilterClass);
-  currentFilterClass = newFilterClass;
-}
-
-slider.noUiSlider.on('update', () => {
-  const value = slider.noUiSlider.get();
-  const filterInfo = currentFilterInfo.filterInfo;
-  imgPreview.style.filter = createFilterString(filterInfo, value);
-  filterValue.value = value.toString();
-});
+export { resetEffects };

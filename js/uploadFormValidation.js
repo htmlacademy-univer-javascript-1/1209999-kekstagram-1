@@ -1,10 +1,12 @@
+import { form } from './util.js';
 import { checkStringLength } from './util.js';
 import '../pristine/pristine.min.js';
 
-const form = document.querySelector('.img-upload__form');
-const hashtagsInputForm = document.querySelector('.text__hashtags');
-const descriptionInputForm = document.querySelector('.text__description');
-const hashtagTemplate = '#[A-Za-zА-Яа-яЁё0-9]{1,19}';
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+const HASHTAG_REGEXP = '#[A-Za-zА-Яа-яЁё0-9]{1,19}';
+
+const hashtagsInput = document.querySelector('.text__hashtags');
+const imgDescriptionInput = document.querySelector('.text__description');
 
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
@@ -15,11 +17,15 @@ const pristine = new Pristine(form, {
   errorTextClass: 'img-upload__error'
 });
 
-function showHashtags(hashtagsString) {
+pristine.addValidator(hashtagsInput, validateHashtags, 'Некорректный ввод хэш-тегов');
+pristine.addValidator(imgDescriptionInput, (value) => checkStringLength(value, 140),
+  'Длина комментария не должна превышать 140 символов');
+
+function validateHashtags(hashtagsString) {
   if (hashtagsString.length === 0) {
     return true;
   }
-  const hashtagsRegexp = new RegExp(`^${hashtagTemplate}( ${hashtagTemplate})*$`);
+  const hashtagsRegexp = new RegExp(`^${HASHTAG_REGEXP}( ${HASHTAG_REGEXP})*$`);
   if (!hashtagsRegexp.test(hashtagsString)) {
     return false;
   }
@@ -35,12 +41,12 @@ function showHashtags(hashtagsString) {
   return hashtagsSet.size <= 5;
 }
 
+function validateFile(filename) {
+  return FILE_TYPES.some((filetype) => filename.endsWith(`.${filetype}`));
+}
+
 function validateForm() {
   return pristine.validate();
 }
 
-pristine.addValidator(hashtagsInputForm, showHashtags, 'Некорректный ввод хэш-тегов');
-pristine.addValidator(descriptionInputForm, (value) => checkStringLength(value, 140), 'Длина комментария не должна превышать 140 символов');
-
-
-export {form, hashtagsInputForm, descriptionInputForm, validateForm};
+export { form, hashtagsInput, imgDescriptionInput, validateForm, validateFile };
