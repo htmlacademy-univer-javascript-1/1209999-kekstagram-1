@@ -1,30 +1,36 @@
-const leftBorder = 25;
-const rightBorder = 100;
-const stepBetweenBorder = 25;
+import { form, imagePreview } from './util.js';
 
-const form = document.querySelector('.img-upload__form');
-const imgPreview = form.querySelector('.img-upload__preview');
-const imgScale = form.querySelector('.img-upload__scale');
-const scaleValue = imgScale.querySelector('.scale__control--value');
-const zoomButton = imgScale.querySelector('.scale__control--bigger');
-const zoomOutButton = imgScale.querySelector('.scale__control--smaller');
+const SCALE_MIN = 25;
+const SCALE_MAX = 100;
+const SCALE_STEP = 25;
 
-function updateScale(scale) {
+const scaleField = form.querySelector('.img-upload__scale');
+const scaleValue = scaleField.querySelector('.scale__control--value');
+const decreaseScaleButton = scaleField.querySelector('.scale__control--smaller');
+const increaseScaleButton = scaleField.querySelector('.scale__control--bigger');
+
+function applyScale(scale) {
   scaleValue.value = `${scale}%`;
-  imgPreview.style = `transform: scale(${scale / 100})`;
+  imagePreview.style = `transform: scale(${scale / 100})`;
 }
 
-function onScaleChange(borders, isLimit, stepsFunc) {
+function onScaleChange(scaleLimit, scaleToLimitComparator, scalingFun) {
   const currentScale = parseInt(scaleValue.value.replace('%', ''), 10);
-  if (currentScale === borders) {
+  if (currentScale === scaleLimit) {
     return;
   }
-  const newScale = stepsFunc(currentScale, stepBetweenBorder);
-  updateScale(isLimit(newScale, borders) > 0 ? borders : newScale);
+  const newScale = scalingFun(currentScale, SCALE_STEP);
+  applyScale(scaleToLimitComparator(newScale, scaleLimit) > 0 ? scaleLimit : newScale);
 }
 
-zoomOutButton.addEventListener('click', () => onScaleChange(leftBorder,
+function resetScale() {
+  applyScale(100);
+}
+
+increaseScaleButton.addEventListener('click', () => onScaleChange(SCALE_MAX,
+  (a, b) => a - b, (curScale, step) => curScale + step));
+
+decreaseScaleButton.addEventListener('click', () => onScaleChange(SCALE_MIN,
   (a, b) => b - a, (curScale, step) => curScale - step));
 
-zoomButton.addEventListener('click', () => onScaleChange(rightBorder,
-  (a, b) => a - b, (curScale, step) => curScale + step));
+export { resetScale };

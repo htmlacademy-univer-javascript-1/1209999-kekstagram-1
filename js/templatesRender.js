@@ -1,34 +1,34 @@
-import { randomArrayElements, debounce } from './util.js';
+import { randomElements, debounce } from './util.js';
 
-const filtres = document.querySelector('.img-filters');
-const defaultFilter = document.querySelector('#filter-default');
-const filtersForm = filtres.querySelector('.img-filters__form');
+const FILTER_BUTTON = 'img-filters__button--active';
+const INACTIVE_FILTERS = 'img-filters--inactive';
+const RERENDER_DELAY = 500;
+
+const filtersBlock = document.querySelector('.img-filters');
+const filtersForm = filtersBlock.querySelector('.img-filters__form');
 const buttons = filtersForm.querySelectorAll('button');
+const defaultFilterButton = document.querySelector('#filter-default');
 
-const defaultFilterButton = 'img-filters__button--active';
-const inactiveFilter = 'img-filters--inactive';
-const delay = 500;
+let prevButton = defaultFilterButton;
+
 const postsComparator = (post1, post2) => post2.likes - post1.likes;
-
-let prevClickedButton = defaultFilter;
-
-const doFilterRender = {
+const doRender = {
   'filter-default': (posts, render) => render(posts),
-  'filter-random': (posts, render) => render(randomArrayElements(10, posts)),
+  'filter-random': (posts, render) => render(randomElements(10, posts)),
   'filter-discussed': (posts, render) => render(posts.slice().sort(postsComparator))
 };
 
-function adjustRenderFiltering(posts, renderFun) {
-  filtres.classList.remove(inactiveFilter);
+function adjustFiltering(posts, renderFun) {
+  filtersBlock.classList.remove(INACTIVE_FILTERS);
   buttons.forEach((button) =>
     button.addEventListener('click', (evt) => {
       const clickedButton = evt.target;
-      prevClickedButton.classList.remove(defaultFilterButton);
-      clickedButton.classList.add(defaultFilterButton);
-      prevClickedButton = clickedButton;
-      const renderFilter = doFilterRender[clickedButton.id];
-      debounce(() => renderFilter(posts, renderFun), delay);
+      prevButton.classList.remove(FILTER_BUTTON);
+      clickedButton.classList.add(FILTER_BUTTON);
+      prevButton = clickedButton;
+      const filteredRenderFun = doRender[clickedButton.id];
+      debounce(() => filteredRenderFun(posts, renderFun), RERENDER_DELAY);
     }));
 }
 
-export { adjustRenderFiltering };
+export { adjustFiltering };
